@@ -4,6 +4,7 @@ numpy>=1.22.0  # Required by Manim
 gradio>=3.50.0  # For the web interface
 python-dotenv>=1.0.1  # For environment variables
 pycairo>=1.20.1  # Ensure compatibility on Linux as well
+openai>=0.27.0
 
 # Text and LaTeX rendering
 manimpango>=0.5.0  # For text rendering in Manim
