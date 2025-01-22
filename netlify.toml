@@ -1,0 +1,6 @@
+[build]
+command = "pip install --upgrade pip && pip install wheel setuptools && pip install -r requirements.txt"
+publish = "build"
+
+[build.environment]
+PYTHON_VERSION = "3.8"
