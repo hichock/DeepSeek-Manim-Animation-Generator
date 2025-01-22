@@ -18,17 +18,12 @@ if not os.getenv("DEEPSEEK_API_KEY"):
 
 def format_latex(text):
     """Format inline LaTeX expressions for proper rendering in Gradio."""
-    # Replace single dollar signs with double for better display
     lines = text.split('\n')
     formatted_lines = []
-    
     for line in lines:
-        # Skip lines that already have double dollars
         if '$$' in line:
             formatted_lines.append(line)
             continue
-            
-        # Format single dollar expressions
         in_math = False
         new_line = ''
         for i, char in enumerate(line):
@@ -38,35 +33,27 @@ def format_latex(text):
             else:
                 new_line += char
         formatted_lines.append(new_line)
-    
     return '\n'.join(formatted_lines)
 
 def chat_with_deepseek(message, history):
-    # Convert history to the format expected by the API
     messages = []
     for human, assistant in history:
         messages.append({"role": "user", "content": human})
         if assistant:
             messages.append({"role": "assistant", "content": assistant})
     messages.append({"role": "user", "content": message})
-    
-    # Call the DeepSeek API
+
     try:
         response = client.chat.completions.create(
             model="deepseek-reasoner",
             messages=messages
         )
-        
-        # Get both reasoning and final content
         reasoning = format_latex(response.choices[0].message.reasoning_content)
         answer = format_latex(response.choices[0].message.content)
-        
-        # Return both, separated by a clear delimiter
         return f"🤔 Reasoning:\n{reasoning}\n\n📝 Answer:\n{answer}"
     except Exception as e:
         return f"Error: {str(e)}"
 
-# Create Gradio interface with markdown enabled
 iface = gr.ChatInterface(
     chat_with_deepseek,
     title="DeepSeek Reasoning Chat",
@@ -75,4 +62,6 @@ iface = gr.ChatInterface(
 )
 
 if __name__ == "__main__":
-    iface.launch() 
+    # Bind to the PORT environment variable, or default to 8080
+    port = int(os.getenv("PORT", 8080))
+    iface.launch(server_name="0.0.0.0", server_port=port)
